@@ -1,0 +1,14 @@
+---
+- name: Converge
+  hosts: all
+  pre_tasks:
+    - name: Install EPEL
+      yum:
+        name: "epel-release"
+        state: present
+    - name: Install Pip and Git
+      yum:
+        name: "python2-pip, git"
+        state: present
+  roles:
+    - role: gogs_call_api

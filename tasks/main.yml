@@ -1,0 +1,5 @@
+---
+- name: Role Description
+  debug:
+    msg: "This role is a group of api call tasks intended to be used by the 'include_role' action."
+...

@@ -1,0 +1,35 @@
+# Usage:
+#
+#  - name: Create GOGS repository
+#    include_role:
+#      name: gogs_call_api
+#      tasks_from: gogs_create_repository
+#    vars:
+#      gogs_url: "http://gogs-test:3000"
+#      git_repository_url: "https://github.com/prometeo-cloud/proto-role"
+#
+---
+- name: Check to see if repository exists
+  uri:
+    url: "{{ gogs_url }}/api/v1/repos/search?q={{ git_repository_url | basename }}"
+  register: repo_exists
+
+- name: Store repository exists check result
+  set_fact:
+    repo_clone_data: "{{ repo_exists.json | json_query('data[]') }}"
+
+- name: Create GOGS repository - {{ git_repository_url | basename }}
+  uri:
+    url: "{{ gogs_url }}/api/v1/admin/users/{{ gogs_user }}/repos"
+    body: '{ "name": "{{ git_repository_url | basename }}"  }'
+    body_format: "json"
+    headers:
+      Content-Type: "application/json"
+      Authorization: "token {{ gogs_token }}"
+    method: POST
+    status_code: 201
+  ignore_errors: yes
+  register: create_repo
+  changed_when: True
+  when: repo_clone_data == []
+...

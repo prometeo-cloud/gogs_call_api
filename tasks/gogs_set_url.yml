@@ -1,0 +1,18 @@
+# Usage:
+#
+#  - name: Set GOGS repository URL
+#    include_role:
+#      name: gogs_call_api
+#      tasks_from: gogs_set_url
+#    vars:
+#      gogs_url: "http://gogs-test:3000"
+#      gogs_token: "{{ ansible_env.GOGS_TOKEN }}"
+#      gogs_repository_url: "http://my-gogs-repo.com/proto-role"
+#      gogs_clone_folder: "~/Repositories/"
+#
+---
+- name: Set repository head to new GOGS repository
+  shell: "git remote set-url origin http://{{ gogs_token }}:x-oauth-basic@{{ gogs_url | urlsplit('netloc') }}/gogs/{{ gogs_repository_url | basename }}.git"
+  args:
+    chdir: "{{ gogs_clone_folder }}/{{ item | basename }}"
+...

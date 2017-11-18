@@ -1,0 +1,24 @@
+# Usage:
+#
+#  - name: List GOGS repositories
+#    include_role:
+#      name: gogs_call_api
+#      tasks_from: gogs_list_repositories
+#    vars:
+#      gogs_url: "http://gogs-test:3000"
+#      gogs_search_keyword: "keyword"
+#
+---
+- name: Install Jmespath for parsing JSON
+  pip:
+    name: jmespath
+
+- name: Get list of GOGS repos
+  uri:
+    url: "{{ gogs_url }}/api/v1/repos/search?q={{ gogs_search_keyword }}"
+  register: results
+
+- name: Save repository list
+  set_fact:
+    gogs_repository_list: "{{ results.json | json_query('data[*].html_url') }}"
+...

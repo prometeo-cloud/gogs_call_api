@@ -1,0 +1,18 @@
+# Usage:
+#
+#  - name: Push GOGS repository
+#    include_role:
+#      name: gogs_call_api
+#      tasks_from: gogs_push_repository
+#    vars:
+#      gogs_repository: "http://gogs-test:3000/gogs/proto-role"
+#      gogs_clone_folder: "{{ clone_folder }}"
+#
+---
+- name: Push GOGS repository {{ gogs_repository | basename }}
+  command: "git push"
+  args:
+    chdir: "{{ gogs_clone_folder }}/{{ gogs_repository | basename }}"
+  register: result
+  changed_when: result.stderr.find('Everything up-to-date') == -1
+...
